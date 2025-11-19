@@ -1,39 +1,38 @@
 pipeline{
   agent any
   tools{
-    maven 'maven_devops'
+    maven 'devops_maven'
   }
   triggers{
     githubPush()
   }
-  enviroment{
-      POM="jugandoArreglos/pom.xml"
+  environment{
+      POM="playArreglos/pom.xml"
   }
   stages{
     stage('Descarga'){
       steps{
-        git url:'https://github.com/Adan0402/JugandoArreglos.git', branch: 'main'
+        git url:'https://github.com/abeljunior717/PlayArreglos.git', branch:'main'
       }
     }
-    stage('compilacion'){
+    stage('Compilacion'){
       steps{
-        sh 'mvn -f $POM -B'
+        sh 'mvn -f $POM -B package'
       }
     }
-    stage('Prueba'){
+    stage ('Prueba'){
       steps{
-        sh 'mvn -f $POM test'
+        sh 'mvn -f $POM -B test'
       }
       post{
-          always{
-              junit 'jugandoArreglos/target/surefire-reports/*.xml'
+        always{
+          junit 'playArreglos/target/surefire-reports/*.xml'
         }
       }
-   }
-    stage('empaquetado'){
+    }
+    stage('Empaquetado'){
       steps{
-        sh 'mvn -f $POM package'
-        archiveArtifacts artifacts: 'jugandoArreglos/target/*.jar', fingerprint:true
+        archiveArtifacts artifacts: 'playArreglos/target/*.jar',fingerprint:true
       }
     }
   }
